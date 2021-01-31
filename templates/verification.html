@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- this isn't a ctf so don't get any ideas :) -->
+  <head>
+    <script type='module'>
+      import { h, text, app } from 'https://unpkg.com/hyperapp';
+
+      const VALID_SUFFIXES = ['@education.nsw.gov.au', '.edu.au', '@unswalumni.com'];
+
+      const toggle = (field, value) => (state) => ({
+        ...state,
+        [field]: value
+      });
+
+      const inputText = (field) => (state, event) => ({
+        ...state,
+        [field]: event.target.value
+      });
+
+      const isEducation = (email) => VALID_SUFFIXES.reduce((cur, suffix) => cur || email.endsWith(suffix), false);
+
+      const isValid = ({ name, unsw, arc, zid, email, phone }) =>
+        name && 
+        ((unsw && arc !== null && zid) ||
+          (unsw !== null && (
+            (email && isEducation(email)) ||
+            (email && phone)
+          ))
+        );
+
+      app({
+        init: { name: '', unsw: null, arc: null, zid: '', email: '' },
+        view: ({ discordUser, name, unsw, arc, zid, email, phone }) =>
+          h('main', {}, [
+            h('h1', {}, text('Welcome to the SecSoc Discord Server!')),
+            h('form', {method: 'POST'}, [
+              h('div', {}, [
+                h('label', {}, text('What is your full name?')),
+                h('input', {name: 'name', type: 'text', value: name, required: true, oninput: inputText('name') })
+              ]),
+
+              h('div', {}, [
+                h('label', {}, text('Are you currently a UNSW student or staff?')),
+                h('input', {name: 'unsw', type: 'radio', required: true, value: '1', onclick: toggle('unsw', true)}),
+                text('Yes'),
+                h('input', {name: 'unsw', type: 'radio', required: true, value: '0', onclick: toggle('unsw', false)}),
+                text('No')
+              ]),
+
+              unsw && h('div', {}, [
+                h('label', {}, text('Are you an ARC member?')),
+                h('input', {name: 'arc', type: 'radio', required: true, value: '1', onclick: toggle('arc', true)}),
+                text('Yes'),
+                h('input', {name: 'arc', type: 'radio', required: true, value: '0', onclick: toggle('arc', false)}),
+                text('No')
+              ]),
+
+              unsw && h('div', {}, [
+                h('label', {}, text('What is your zID? Please enter in format zXXXXXXX.')),
+                h('input', {name: 'zid', type: 'text', value: zid, required: true, oninput: inputText('zid'), pattern: 'z[0-9]{7}'}),
+              ]),
+
+              unsw === false && h('div', {}, [
+                h('label', {}, text('What is your email address? If you have either a unswalumni.com ' +
+                'address or a education email address, use it here for faster verification!')),
+                h('input', {name: 'email', type: 'email', value: email, onchange: inputText('email')})
+              ]),
+
+              unsw === false && email && !isEducation(email) && h('div', {}, [
+                h('label', {}, text('Since you provided a private email address, what is your phone number? '+
+                'We may call you to verify the validity of this number.')),
+                h('input', {name: 'phone', value: phone, oninput: inputText('phone'), pattern: '04[0-9]{8}'})
+              ]),
+              isValid({ name, unsw, arc, zid, email, phone }) && 
+              h('input', {type: 'submit', value: 'Submit and Login with Discord'})
+            ])
+          ]),
+        node: document.getElementById('app')
+      })
+    </script>
+  </head>
+  <body>
+    <main id='app'></main>
+  </body>
+</html>
