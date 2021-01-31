@@ -1,0 +1,11 @@
+{
+  "bot_token": "",
+  "guild": "",
+  "roles": {
+    "unsw": ["00000"],
+    "assoc": ["00000"]
+  },
+  "client_id": "",
+  "client_secret": ""
+}
+

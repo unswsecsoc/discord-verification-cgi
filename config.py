@@ -1,5 +1,6 @@
 import json
 
+BASE_URL = 'https://cgi.cse.unsw.edu.au/~secsoc/discord'
 EMAIL_MANUAL_CC = 'execs@unswsecurity.com'
 
 with open('config/discord.json') as cfg_file:

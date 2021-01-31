@@ -2,7 +2,7 @@ import os
 import json
 import uuid
 import re
-from config import DISCORD_ROLES
+import config
 from functools import reduce
 from email.utils import parseaddr
 from flask import Blueprint, render_template, redirect, url_for, request
@@ -159,7 +159,7 @@ def post_verification_form():
   if data['automated']:
     send_email(data['email'], 'SecSoc Discord Verification', EMAIL_TEMPLATE_AUTO.format(
       name=data['name'],
-      verification_url=f'https://cgi.cse.unsw.edu.au/~secsoc/verification/link/{user["id"]}/{code}'
+      verification_url=f'{config.BASE_URL}/verification/link/{user["id"]}/{code}'
     ))
   else:
     send_email(data['email'], 'Manual SecSoc Discord Verification', EMAIL_TEMPLATE_NOAUTO.format(
@@ -193,7 +193,7 @@ def get_link(discord_id, code):
   if verified:
     return 'You are already verified, please contact us if you want to change your details.'
 
-  add_roles(discord_id, DISCORD_ROLES[m_type])
+  add_roles(discord_id, config.DISCORD_ROLES[m_type])
 
   with open(f'data/{discord_id}', 'w') as f:
     f.write(json.dumps({ **data, 'verified': True }))

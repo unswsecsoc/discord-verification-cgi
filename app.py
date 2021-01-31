@@ -5,7 +5,8 @@ from blueprints.verification import verification_blueprint
 
 
 app = Flask(__name__)
-app.secret_key = 'lol'
+with open('.flask_key') as f:
+  app.secret_key = f.read()
 
 discord_blueprint = make_discord_blueprint(
   client_id=config.DISCORD_CLIENT_ID,
