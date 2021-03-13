@@ -9,7 +9,7 @@ WEB_PATH=`echo "$PWD" | sed -e "s/^.*\/public_html/\/web\/$USER/"`
 ROOT_URL=`echo "$PWD" | sed -e "s/^.*\/public_html\///"`
 
 cp -r config.sample/ config/
-mkdir data
+mkdir -p data
 openssl rand -base64 32 > .flask_key
 
 chmod 700 config data .flask_key
@@ -18,7 +18,7 @@ chmod 700 config data .flask_key
 cat << EOF > .htaccess
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ /~$USER/$ROOT_URL/flask.cgi/$1
+RewriteRule ^(.*)$ /~$USER/$ROOT_URL/flask.cgi/\$1
 EOF
 
 chmod 644 .htaccess
@@ -38,3 +38,4 @@ CGIHandler().run(app)
 EOF
 
 chmod 750 flask.cgi
+chmod 751 .
