@@ -12,7 +12,8 @@ cp -r config.sample/ config/
 mkdir -p data
 openssl rand -base64 32 > .flask_key
 
-chmod 700 config data .flask_key
+chmod 700 config data
+chmod 600 .flask_key
 
 # generate htaccess
 cat << EOF > .htaccess
@@ -37,5 +38,5 @@ from app import app
 CGIHandler().run(app)
 EOF
 
-chmod 750 flask.cgi
+chmod 750 flask.cgi scripts/ .git/
 chmod 751 .
