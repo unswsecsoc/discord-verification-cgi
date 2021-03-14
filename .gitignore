@@ -4,3 +4,5 @@ __pycache__/
 config/
 data/
 .flask_key
+flask.cgi
+.htaccess
