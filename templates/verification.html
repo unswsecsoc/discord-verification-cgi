@@ -32,7 +32,7 @@
         init: { name: '', unsw: null, arc: null, zid: '', email: '' },
         view: ({ discordUser, name, unsw, arc, zid, email, phone }) =>
           h('main', {}, [
-            h('h1', {}, text('Welcome to the Discord Server!')),
+            h('h1', {}, text('Welcome to the {{ server_name }} Discord Server!')),
             h('form', {method: 'POST'}, [
               h('div', {}, [
                 h('label', {}, text('What is your full name?')),

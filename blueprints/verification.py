@@ -18,28 +18,22 @@ VALID_SUFFIXES = ['@education.nsw.gov.au', '.edu.au', '@unswalumni.com']
 
 EMAIL_TEMPLATE_AUTO = """Hello {name},
 
-You have requested verification on the SecSoc Discord server. Please follow
+You have requested verification on the {server_name} Discord server. Please follow
 the link below in order to gain access to the community.
 
 {verification_url}
 
-If there are any issues, feel free to contact us at execs@unswsecurity.com.
-
-Happy Hacking!
-SecSoc
+If there are any issues, feel free to contact us at {contact_email}.
 """
 
 
 EMAIL_TEMPLATE_NOAUTO = """Hello {name},
 
-You have requested verification on the SecSoc Discord server. Since you
+You have requested verification on the {server_name} Discord server. Since you
 provided us with a private email and phone number, we will aim to verify you
 as soon as possible.
 
-If there are any issues, feel free to contact us at execs@unswsecurity.com.
-
-Happy Hacking!
-SecSoc
+If there are any issues, feel free to contact us at {contact_email}.
 """
 
 BOOL_CONVERT = {
@@ -132,7 +126,7 @@ def get_verification_form():
   if check_user_verified(user['id']):
     return 'You are already verified, please contact us if you want to change your details.'
 
-  return render_template('verification.html')
+  return render_template('verification.html', server_name=config.APP_SERVER_NAME)
 
 @verification_blueprint.route('/', methods=['POST'])
 def post_verification_form():
@@ -157,14 +151,18 @@ def post_verification_form():
     }))
   
   if data['automated']:
-    send_email(data['email'], 'SecSoc Discord Verification', EMAIL_TEMPLATE_AUTO.format(
+    send_email(data['email'], f'{config.APP_SERVER_NAME} Discord Verification', EMAIL_TEMPLATE_AUTO.format(
       name=data['name'],
-      verification_url=f'{config.BASE_URL}/verification/link/{user["id"]}/{code}'
+      server_name=config.APP_SERVER_NAME,
+      contact_email=config.APP_CONTACT_EMAIL,
+      verification_url=f'{config.APP_BASE_URL}/verification/link/{user["id"]}/{code}'
     ))
   else:
-    send_email(data['email'], 'Manual SecSoc Discord Verification', EMAIL_TEMPLATE_NOAUTO.format(
-      name=data['name']
-    ), config.EMAIL_MANUAL_CC)
+    send_email(data['email'], f'Manual {config.APP_SERVER_NAME} Discord Verification', EMAIL_TEMPLATE_NOAUTO.format(
+      name=data['name'],
+      server_name=config.APP_SERVER_NAME,
+      contact_email=config.APP_CONTACT_EMAIL,
+    ), config.APP_CONTACT_EMAIL)
 
   return 'Please check your email for an activation link.'
 
@@ -188,7 +186,7 @@ def get_link(discord_id, code):
     return 'Record Not Found'
 
   if not automated:
-    return 'Please contact us at execs@unswsecurity.com in order to verify.'
+    return 'Please contact us at {config.APP_CONTACT_EMAIL} in order to verify.'
 
   if verified:
     return 'You are already verified, please contact us if you want to change your details.'
