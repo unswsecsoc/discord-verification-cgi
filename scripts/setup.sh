@@ -8,11 +8,12 @@ fi
 WEB_PATH=`echo "$PWD" | sed -e "s/^.*\/public_html/\/web\/$USER/"`
 ROOT_URL=`echo "$PWD" | sed -e "s/^.*\/public_html\///"`
 
-cp -r config.sample/ config/
-mkdir -p data
+mkdir -p data config
+chmod 700 config data
+
+cp -rn config.sample/*.json config/
 openssl rand -base64 32 > .flask_key
 
-chmod 700 config data
 chmod 600 .flask_key
 
 # generate htaccess
